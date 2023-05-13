@@ -16,4 +16,13 @@ url: "https://jwxt.bistu.edu.cn/jwapp/sys/kxjas/modules/kxjscx/cxkxjs.do"
 referer: "https://jwxt.bistu.edu.cn/jwapp/sys/kxjas/*default/index.do?EMAP_LANG=zh"
 user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36"
 type: "application/x-www-form-urlencoded; charset=UTF-8"
+# 登录接口
+LOGIN_API: "https://wxjw.bistu.edu.cn/authserver/login?service=https://jwxt.bistu.edu.cn:443/jwapp/sys/emaphome/portal/index.do"
+# 教务网账号密码
+username: 2018010426
+password: Bistu123456
+
+#username: 2018011184
+#password: aaa212265
+
 

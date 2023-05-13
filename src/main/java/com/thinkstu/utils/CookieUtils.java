@@ -21,6 +21,10 @@ public class CookieUtils {
     OkHttpClient client;
     @Autowired
     PathInit pathUtils;
+    @Value("${username}")
+    private String username;
+    @Value("${password}")
+    private String password;
 
     /**
      * 该 Cookie 类的作用应该为：从文件中读取 Cookie 值，但是不应该连续使用（耗资源）
@@ -54,8 +58,7 @@ public class CookieUtils {
                 .build();
         // cookie 的 3 种状态：1、不需要更新，2、更新成功，3、更新失败（发生异常）
         try (Response response = client.newCall(request).execute()) {
-            // 如果 cookie 失效，则更新
-            if (!response.header("X-Frame-Options").equals("SAMEORIGIN")) {
+            if (!response.header("X-Frame-Options").equals("SAMEORIGIN")) { // 如果 cookie 失效，则更新
                 cookie = this.update();
                 log.info("===》cookie 更新成功");
             } else {
@@ -72,15 +75,11 @@ public class CookieUtils {
      */
     String update() throws IOException {
         Request request = new Request.Builder()
-                .url("http://bistu.thinkstu.com/bistu/empty"
-//                        + "?username=2018011184"
-//                        + "&password=aaa212265")
-                        + "?username=2018010426"
-                        + "&password=Bistu123456")
+                .url("http://bistu.thinkstu.com/bistu/empty?username=" + username + "&password=" + password)
                 .build();
         Response response    = client.newCall(request).execute();
         String   emptyCookie = JSON.parseObject(response.body().string(), CookieEntity.class).getEmptyCookie();
-        response.close();   // 释放资源
+        response.close();
         // 将新 cookie 写入文件
         File       file = new File(pathUtils.getCookie_file());
         FileWriter fw   = new FileWriter(file, false);

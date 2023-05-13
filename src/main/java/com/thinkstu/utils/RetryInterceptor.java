@@ -4,7 +4,7 @@ import okhttp3.*;
 
 import java.io.*;
 
-// 功能：重试拦截器
+// 功能：重试
 public class RetryInterceptor implements Interceptor {
     private int maxRetryCount; // 最大重试次数
     private int retryInterval; // 重试间隔
