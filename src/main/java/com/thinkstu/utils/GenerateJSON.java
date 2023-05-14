@@ -17,7 +17,7 @@ import java.util.regex.*;
 @Component
 public class GenerateJSON {
     @Autowired
-    PathInit pathInit;
+    PathInitial pathInitial;
     Pattern pattern = Pattern.compile("[^\\u4E00-\\u9FA5]+");   // 非中文匹配
     Pattern excludePattern10 = Pattern.compile(".*(WLA-(10[123]|30[1259]))|(WLC-112).*");  // 新校区需要排除的教室
     Pattern excludePattern2 = Pattern.compile("2-3-\\d.*|.*(102|108|303|407).*");  // 健翔桥校区需要排除的教室
@@ -80,7 +80,7 @@ public class GenerateJSON {
         }
         // 输出至文件
         StringBuilder filename = new StringBuilder();
-        filename.append(pathInit.getPath()).append("/4/4").append(date).append(time).append(".json");
+        filename.append(pathInitial.getPath()).append("/4/4").append(date).append(time).append(".json");
         try (PrintWriter printWriter = new PrintWriter(filename.toString())) {
             printWriter.print(JSON.toJSONString(map));
         } catch (Exception e) {
@@ -126,7 +126,7 @@ public class GenerateJSON {
         }
         // 输出至文件
         StringBuilder filename = new StringBuilder();
-        filename.append(pathInit.getPath()).append("/1/1").append(date).append(time).append(".json");
+        filename.append(pathInitial.getPath()).append("/1/1").append(date).append(time).append(".json");
 
         try (PrintWriter printWriter = new PrintWriter(filename.toString())) {
             printWriter.print(JSON.toJSONString(map));
@@ -190,7 +190,7 @@ public class GenerateJSON {
         }
         // 输出至文件
         StringBuilder filename = new StringBuilder();
-        filename.append(pathInit.getPath()).append("/2/2").append(date).append(time).append(".json");
+        filename.append(pathInitial.getPath()).append("/2/2").append(date).append(time).append(".json");
         try (PrintWriter printWriter = new PrintWriter(filename.toString())) {
             printWriter.print(JSON.toJSONString(map));
         } catch (Exception e) {
@@ -233,7 +233,7 @@ public class GenerateJSON {
         }
         // 输出至文件
         StringBuilder filename = new StringBuilder();
-        filename.append(pathInit.getPath()).append("/3/3").append(date).append(time).append(".json");
+        filename.append(pathInitial.getPath()).append("/3/3").append(date).append(time).append(".json");
         try (PrintWriter printWriter = new PrintWriter(filename.toString())) {
             printWriter.print(JSON.toJSONString(map));
         } catch (Exception e) {

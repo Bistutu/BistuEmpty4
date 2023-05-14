@@ -1,7 +1,6 @@
 package com.thinkstu.utils;
 
-import com.alibaba.fastjson2.*;
-import com.thinkstu.entity.*;
+import com.thinkstu.service.*;
 import lombok.extern.slf4j.*;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.*;
@@ -17,14 +16,19 @@ import java.io.*;
 @Slf4j
 @Component
 public class CookieUtils {
-    @Autowired
     OkHttpClient client;
-    @Autowired
-    PathInit pathUtils;
+    PathInitial pathUtils;
+    LoginService loginService;
     @Value("${username}")
     private String username;
     @Value("${password}")
     private String password;
+
+    public CookieUtils(OkHttpClient client, PathInitial pathUtils, LoginService loginService) {
+        this.client = client;
+        this.pathUtils = pathUtils;
+        this.loginService = loginService;
+    }
 
     /**
      * 该 Cookie 类的作用应该为：从文件中读取 Cookie 值，但是不应该连续使用（耗资源）
@@ -37,7 +41,7 @@ public class CookieUtils {
             BufferedReader in     = new BufferedReader(reader);
             emptyCookie = in.readLine();
         } catch (Exception e) {
-            // 什么也不做
+            e.printStackTrace();
         }
         emptyCookie = check(emptyCookie);
         return emptyCookie;
@@ -73,13 +77,8 @@ public class CookieUtils {
     /**
      * 更新 cookie 的值
      */
-    String update() throws IOException {
-        Request request = new Request.Builder()
-                .url("http://bistu.thinkstu.com/bistu/empty?username=" + username + "&password=" + password)
-                .build();
-        Response response    = client.newCall(request).execute();
-        String   emptyCookie = JSON.parseObject(response.body().string(), CookieEntity.class).getEmptyCookie();
-        response.close();
+    String update() throws Exception {
+        String emptyCookie = loginService.loginForEmpty(username, password);
         // 将新 cookie 写入文件
         File       file = new File(pathUtils.getCookie_file());
         FileWriter fw   = new FileWriter(file, false);

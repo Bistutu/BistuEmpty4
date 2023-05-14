@@ -43,7 +43,7 @@ public class FetchEmptyTimer {
         requestUtils.setCookie(cookieUtils.get());          // 获取并设置 Cookie
         LocalDateTime now = LocalDateTime.now();            // 获取今天的日期
         // for 循环，从 1~8，对应我们定义的时段
-        for (int token = 0; token < 5; token++) {
+        for (int token = 0; token < 2; token++) {
             LocalDateTime  current    = now.plus(token, ChronoUnit.DAYS);
             String         yyyy_MM_dd = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(current);
             String         MM_DD      = DateTimeFormatter.ofPattern("MMdd").format(current);
