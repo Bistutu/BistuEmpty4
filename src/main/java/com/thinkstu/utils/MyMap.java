@@ -47,9 +47,7 @@ public class MyMap<T, K> extends HashMap<T, K> {
     // 静态方法：Map 转 MyMap
     public static MyMap<String, String> mapConvertMymap(Map<String, String> map) {
         MyMap<String, String> myMap = new MyMap<>();
-        map.entrySet().forEach(e -> {
-            myMap.put(e.getKey(), e.getValue());
-        });
+        myMap.putAll(map);
         return myMap;
     }
 

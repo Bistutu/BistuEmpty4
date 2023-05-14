@@ -15,7 +15,7 @@ public class HttpsUrlValidator {
         }
     };
 
-    public final static String retrieveResponseFromServer(final String url) {
+    public static void retrieveResponseFromServer(final String url) {
         HttpURLConnection connection = null;
 
         try {
@@ -27,8 +27,8 @@ public class HttpsUrlValidator {
             final BufferedReader in = new BufferedReader(new InputStreamReader(
                     connection.getInputStream()));
 
-            String             line;
-            final StringBuffer stringBuffer = new StringBuffer(255);
+            String              line;
+            final StringBuilder stringBuffer = new StringBuilder(255);
 
             synchronized (stringBuffer) {
                 while ((line = in.readLine()) != null) {
@@ -36,7 +36,6 @@ public class HttpsUrlValidator {
                     stringBuffer.append("\n");
                 }
 
-                return stringBuffer.toString();
             }
 
         } catch (Exception e) {
@@ -46,7 +45,6 @@ public class HttpsUrlValidator {
                 connection.disconnect();
             }
         }
-        return null;
     }
 
     public static void trustAllHttpsCertificates() throws Exception {

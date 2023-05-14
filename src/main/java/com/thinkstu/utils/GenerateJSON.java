@@ -3,7 +3,6 @@ package com.thinkstu.utils;
 import com.alibaba.fastjson2.*;
 import com.thinkstu.comparator.*;
 import com.thinkstu.entity.*;
-import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
 import java.io.*;
@@ -16,12 +15,14 @@ import java.util.regex.*;
  **/
 @Component
 public class GenerateJSON {
-    @Autowired
-    PathInitial pathInitial;
-    Pattern pattern = Pattern.compile("[^\\u4E00-\\u9FA5]+");   // 非中文匹配
+    private final PathInitial pathInitial;
+    Pattern nonChinesePattern = Pattern.compile("[^\\u4E00-\\u9FA5]+");   // 非中文匹配
     Pattern excludePattern10 = Pattern.compile(".*(WLA-(10[123]|30[1259]))|(WLC-112).*");  // 新校区需要排除的教室
-    Pattern excludePattern2 = Pattern.compile("2-3-\\d.*|.*(102|108|303|407).*");  // 健翔桥校区需要排除的教室
+    Pattern excludePattern2 = Pattern.compile("2-3-\\d.*|.*(102|108|303|407).*");          // 健翔桥校区需要排除的教室
 
+    public GenerateJSON(PathInitial pathInitial) {
+        this.pathInitial = pathInitial;
+    }
 
     public void generate10(String data, String date, Integer time) {
         // 获得响应数据，rows 为获得的教室实体对象
@@ -34,7 +35,7 @@ public class GenerateJSON {
         LinkedList<String>                                    wla    = new LinkedList<>();
         LinkedList<String>                                    wlb    = new LinkedList<>();
         LinkedList<String>                                    wlc    = new LinkedList<>();
-        LinkedHashMap<String, LinkedList>                     map    = new LinkedHashMap<>();
+        LinkedHashMap<String, LinkedList<String>>             map    = new LinkedHashMap<>();
         map.put("文理楼A \uD83D\uDCD4 ", wla);
         map.put("文理楼B \uD83D\uDCD4 ", wlb);
         map.put("文理楼C \uD83D\uDCD4 ", wlc);
@@ -42,12 +43,11 @@ public class GenerateJSON {
         map.put("信息楼B \uD83D\uDCBB ", xxb);
         map.put("信息楼C \uD83D\uDCBB ", xxc);
         map.put("信息楼D \uD83D\uDCBB ", xxd);
-        // [^\u4E00-\u9FA5]+ 匹配非中文字符，新校区不需要含中文的教室
-        // []表示字符集合^表示取反，\u4E00-\u9FA5表示Unicode中的中文字符范围，+表示匹配一次或多次。
+
         for (EmptyResultEntity.DatasBean.CxkxjsBean.RowsBean row : rows) {
             String classroom = row.getJASMC();
-            // 这里作了排除教室的设定
-            if (pattern.matcher(classroom).matches() && !excludePattern10.matcher(classroom).matches()) {
+            // 匹配非中文字符，新校区不需要含中文的教室
+            if (nonChinesePattern.matcher(classroom).matches() && !excludePattern10.matcher(classroom).matches()) {
                 // 拆分教室名称，如 XXA-101，并添加至队列
                 String[] split = classroom.split("-");
                 String key = switch (split[0]) {
@@ -68,22 +68,19 @@ public class GenerateJSON {
         checkAllEmpty(map);
         // 手动删除一些无法使用的教室
         xxa.remove("301");
-//        xxb.remove("101");
         // 文理 A/C 需要排序
-        Collections.sort(wla, new IntegerComparator());
-        Collections.sort(wlc, new IntegerComparator());
+        wla.sort(new IntegerComparator());
+        wlc.sort(new IntegerComparator());
         // 如果当前时段没有空教室，则标记为“无”
-        for (LinkedList linkedList : map.values()) {
+        for (LinkedList<String> linkedList : map.values()) {
             if (linkedList.size() == 0) {
                 linkedList.addLast("无");
             }
         }
         // 输出至文件
-        StringBuilder filename = new StringBuilder();
-        filename.append(pathInitial.getPath()).append("/4/4").append(date).append(time).append(".json");
-        try (PrintWriter printWriter = new PrintWriter(filename.toString())) {
+        try (PrintWriter printWriter = new PrintWriter(pathInitial.getPath() + "/4/4" + date + time + ".json")) {
             printWriter.print(JSON.toJSONString(map));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -94,7 +91,7 @@ public class GenerateJSON {
         LinkedList<String>                                    one    = new LinkedList<>();
         LinkedList<String>                                    two    = new LinkedList<>();
         LinkedList<String>                                    fourth = new LinkedList<>();
-        LinkedHashMap<String, LinkedList>                     map    = new LinkedHashMap<>();
+        LinkedHashMap<String, LinkedList<String>>             map    = new LinkedHashMap<>();
         map.put("第一教学楼", one);
         map.put("第二教学楼", two);
         map.put("第四教学楼", fourth);
@@ -103,7 +100,7 @@ public class GenerateJSON {
         for (EmptyResultEntity.DatasBean.CxkxjsBean.RowsBean row : rows) {
             String classroom = row.getJASMC();
             // 这里做了排除教室的设定
-            if (pattern.matcher(classroom).matches()) {
+            if (nonChinesePattern.matcher(classroom).matches()) {
                 // 拆分教室名称，如 1-4-2003，并添加至队列，首部 1 为校区
                 String[] split = classroom.split("-");
                 String key = switch (split[1]) {
@@ -119,25 +116,25 @@ public class GenerateJSON {
         // 检测，如果全部为空！则标明教务网此次请求存在 error，这里就会抛出异常，不会将数据写入文件
         checkAllEmpty(map);
         // 如果当前时段没有空教室，则标记为“无”
-        for (LinkedList linkedList : map.values()) {
+        for (LinkedList<String> linkedList : map.values()) {
             if (linkedList.size() == 0) {
                 linkedList.addLast("无");
             }
         }
         // 输出至文件
-        StringBuilder filename = new StringBuilder();
-        filename.append(pathInitial.getPath()).append("/1/1").append(date).append(time).append(".json");
-
-        try (PrintWriter printWriter = new PrintWriter(filename.toString())) {
+        try (PrintWriter printWriter = new PrintWriter(pathInitial.getPath() + "/1/1" + date + time + ".json")) {
             printWriter.print(JSON.toJSONString(map));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
-    private void checkAllEmpty(Map<String, LinkedList> map) {
+    private void checkAllEmpty(Map<String, LinkedList<String>> map) {
         int check = 0;
-        for (LinkedList linkedList : map.values()) {
-            if (linkedList.size() != 0) check = 1;
+        for (LinkedList<String> linkedList : map.values()) {
+            if (linkedList.size() != 0) {
+                check = 1;
+                break;
+            }
         }
         if (check == 0) throw new RuntimeException("教务网数据为空！");
     }
@@ -149,7 +146,7 @@ public class GenerateJSON {
         List<EmptyResultEntity.DatasBean.CxkxjsBean.RowsBean> rows   = result.getDatas().getCxkxjs().getRows();
         LinkedList<String>                                    jt     = new LinkedList<>();
         LinkedList<String>                                    two    = new LinkedList<>();
-        LinkedHashMap<String, LinkedList>                     map    = new LinkedHashMap<>();
+        LinkedHashMap<String, LinkedList<String>>             map    = new LinkedHashMap<>();
         map.put("阶梯教室", jt);
         map.put("第二教学楼", two);
 
@@ -173,7 +170,7 @@ public class GenerateJSON {
                 if (key.equals("skip")) continue;
                 map.get(key).addLast(split[2]);
                 // 对阶梯教室进行排序
-                Collections.sort(jt, (s1, s2) -> {
+                jt.sort((s1, s2) -> {
                     int num1 = getNumber(s1);
                     int num2 = getNumber(s2);
                     return Integer.compare(num1, num2);
@@ -183,18 +180,15 @@ public class GenerateJSON {
         // 检测，如果全部为空！则标明教务网此次请求存在 error，这里就会抛出异常，就不会将数据写入文件
         checkAllEmpty(map);
         // 如果当前时段没有空教室，则标记为“无”
-        for (LinkedList linkedList : map.values()) {
+        for (LinkedList<String> linkedList : map.values()) {
             if (linkedList.size() == 0) {
                 linkedList.addLast("无");
             }
         }
         // 输出至文件
-        StringBuilder filename = new StringBuilder();
-        filename.append(pathInitial.getPath()).append("/2/2").append(date).append(time).append(".json");
-        try (PrintWriter printWriter = new PrintWriter(filename.toString())) {
+        try (PrintWriter printWriter = new PrintWriter(pathInitial.getPath() + "/2/2" + date + time + ".json")) {
             printWriter.print(JSON.toJSONString(map));
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
     }
 
@@ -205,7 +199,7 @@ public class GenerateJSON {
         LinkedList<String>                                    one    = new LinkedList<>();
         LinkedList<String>                                    two    = new LinkedList<>();
         LinkedList<String>                                    third  = new LinkedList<>();
-        LinkedHashMap<String, LinkedList>                     map    = new LinkedHashMap<>();
+        LinkedHashMap<String, LinkedList<String>>             map    = new LinkedHashMap<>();
         map.put("第一教学楼", one);
         map.put("第二教学楼", two);
         map.put("第三教学楼", third);
@@ -226,42 +220,30 @@ public class GenerateJSON {
         // 检测，如果全部为空！则标明教务网此次请求存在 error，这里就会抛出异常，就不会将数据写入文件
         checkAllEmpty(map);
         // 如果当前时段没有空教室，则标记为“无”
-        for (LinkedList linkedList : map.values()) {
+        for (LinkedList<String> linkedList : map.values()) {
             if (linkedList.size() == 0) {
                 linkedList.addLast("无");
             }
         }
         // 输出至文件
-        StringBuilder filename = new StringBuilder();
-        filename.append(pathInitial.getPath()).append("/3/3").append(date).append(time).append(".json");
-        try (PrintWriter printWriter = new PrintWriter(filename.toString())) {
+        try (PrintWriter printWriter = new PrintWriter(pathInitial.getPath() + "/3/3" + date + time + ".json")) {
             printWriter.print(JSON.toJSONString(map));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
     // 健翔桥排序专用
     private static int getNumber(String str) {
-        switch (str) {
-            case "一阶梯":
-                return 1;
-            case "二阶梯":
-                return 2;
-            case "三阶梯":
-                return 3;
-            case "四阶梯":
-                return 4;
-            case "五阶梯":
-                return 5;
-            case "六阶梯":
-                return 6;
-            case "七阶梯":
-                return 7;
-            case "八阶梯":
-                return 8;
-            default:
-                return 0;
-        }
+        return switch (str) {
+            case "一阶梯" -> 1;
+            case "二阶梯" -> 2;
+            case "三阶梯" -> 3;
+            case "四阶梯" -> 4;
+            case "五阶梯" -> 5;
+            case "六阶梯" -> 6;
+            case "七阶梯" -> 7;
+            case "八阶梯" -> 8;
+            default -> 0;
+        };
     }
-
 }

@@ -22,8 +22,9 @@ public class PathInitial {
     private String user_dir;
     private String cookie_file;
 
+
     @PostConstruct
-    public void run() {
+    public void get() {
         user_dir = System.getProperty("user.dir");
         cookie_file = user_dir + "/cookie.txt";
         path = checkVirtual() ? user_dir + "/static/empty/" : "/Users/thinkstu/Desktop/empty/";
