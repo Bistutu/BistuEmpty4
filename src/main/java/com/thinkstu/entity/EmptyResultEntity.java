@@ -36,11 +36,8 @@ public class EmptyResultEntity {
                 private int totalPage;
             }
 
-            @NoArgsConstructor
-            @Data
-            public static class RowsBean extends EmptyEntity {
-                // 此处直接继承 EmptyEntity
-            }
+            // 主要的教室数据
+            RowsBean rowsBean;
         }
     }
 }

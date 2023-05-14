@@ -22,7 +22,7 @@ import java.util.concurrent.*;
  **/
 @Slf4j
 @Component
-public class FetchEmptyTimer {
+public class FetchTimer {
     private final ExecutorService executor;
     private final CookieUtils cookieUtils;
     private final GenerateJSON generateJSON;
@@ -30,7 +30,7 @@ public class FetchEmptyTimer {
     private HashMap<Integer, int[]> ruleMap;    // 时段划分的规则集
 
     // 使用构造函数注入依赖
-    public FetchEmptyTimer(ExecutorService executor, CookieUtils cookieUtils, GenerateJSON generateJSON, RequestUtils requestUtils) {
+    public FetchTimer(ExecutorService executor, CookieUtils cookieUtils, GenerateJSON generateJSON, RequestUtils requestUtils) {
         this.executor = executor;
         this.cookieUtils = cookieUtils;
         this.generateJSON = generateJSON;
@@ -44,7 +44,7 @@ public class FetchEmptyTimer {
         LocalDateTime now = LocalDateTime.now();            // 获取今天的日期
 
         // for 循环，从 1~8，对应我们定义的时段
-        for (int token = 0; token < 2; token++) {
+        for (int token = 0; token < 5; token++) {
             LocalDateTime  current    = now.plus(token, ChronoUnit.DAYS);
             String         yyyy_MM_dd = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(current);
             String         MM_DD      = DateTimeFormatter.ofPattern("MMdd").format(current);

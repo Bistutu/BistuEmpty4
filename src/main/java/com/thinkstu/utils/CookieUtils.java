@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
 import java.io.*;
+import java.util.*;
 
 /**
  * @author : ThinkStu
@@ -78,6 +79,9 @@ public class CookieUtils {
      * 更新 cookie 的值
      */
     String update() throws Exception {
+        // Base64 解码成字符串
+        username = new String(Base64.getDecoder().decode(username));
+        password = new String(Base64.getDecoder().decode(password));
         String emptyCookie = loginService.loginForEmpty(username, password);
         // 将新 cookie 写入文件
         File       file = new File(pathUtils.getCookie_file());

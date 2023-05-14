@@ -2,14 +2,10 @@ package com.thinkstu.entity;
 
 import lombok.*;
 
-/**
- * 教务网返回的空教室数据
- */
-
-@Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class EmptyEntity {
+@Data
+public class RowsBean {
+    // 此处直接继承 EmptyEntity
     private String XXXQDM;         // 学校校区
     private String XXXQDM_DISPLAY; // 学校校区
     private String KXRQ;           // 空闲日期

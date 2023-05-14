@@ -1,6 +1,5 @@
-package com.thinkstu.utils;
+package com.thinkstu.entity;
 
-import com.thinkstu.entity.*;
 import lombok.extern.slf4j.*;
 
 import java.net.*;

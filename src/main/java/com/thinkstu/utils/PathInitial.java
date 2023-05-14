@@ -27,7 +27,7 @@ public class PathInitial {
     public void get() {
         user_dir = System.getProperty("user.dir");
         cookie_file = user_dir + "/cookie.txt";
-        path = checkVirtual() ? user_dir + "/static/empty/" : "/Users/thinkstu/Desktop/empty/";
+        path = checkVirtual() ? user_dir + "/static/data/" : "/Users/thinkstu/Desktop/data/";
         // 新建目录，确保目录是存在的
         for (int i = 1; i < 5; i++) {
             new File(path + i).mkdirs();

@@ -1,6 +1,6 @@
 package com.thinkstu.utils;
 
-import org.springframework.beans.factory.annotation.*;
+import kotlin.*;
 import org.springframework.stereotype.*;
 
 import java.util.*;
@@ -153,40 +153,20 @@ public class GetFormat {
         if (time == 0 || time == 1 || time == 2 || time == 3) {
             json.append("{\"a\":\"\",\"b\":\"\",\"c\":\"\",\"d\":\"").append(time).append("\"},");
         }
-        if (time == 0) {
-            KSJC = 1;
-            JSJC = 12;
+        Pair<Integer, Integer> pair;
+        switch (time) {
+            case 0 -> pair = new Pair<>(1, 12);
+            case 1 -> pair = new Pair<>(1, 5);
+            case 2 -> pair = new Pair<>(6, 9);
+            case 3 -> pair = new Pair<>(10, 12);
+            case 112 -> pair = new Pair<>(1, 2);
+            case 135 -> pair = new Pair<>(3, 5);
+            case 267 -> pair = new Pair<>(6, 7);
+            case 289 -> pair = new Pair<>(8, 9);
+            default -> pair = new Pair<>(0, 0); // 无意义
         }
-        if (time == 1) {
-            KSJC = 1;
-            JSJC = 5;
-        }
-        if (time == 2) {
-            KSJC = 6;
-            JSJC = 9;
-        }
-        if (time == 3) {
-            KSJC = 10;
-            JSJC = 12;
-        }
-        if (time == 112) {
-            KSJC = 1;
-            JSJC = 2;
-        }
-        if (time == 135) {
-            KSJC = 3;
-            JSJC = 5;
-        }
-        if (time == 267) {
-            KSJC = 6;
-            JSJC = 7;
-        }
-        if (time == 289) {
-            KSJC = 8;
-            JSJC = 9;
-        }
-        K = KSJC;
-        J = JSJC;
+        K = pair.getFirst();
+        J = pair.getSecond();
         return time;
     }
 
@@ -197,8 +177,6 @@ public class GetFormat {
             case 135, 289 -> colorNumber = 2;
         }
     }
-
-    ;
 
     public int switchTime(int time) {
         switch (time) {

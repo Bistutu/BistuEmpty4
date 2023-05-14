@@ -11,10 +11,9 @@ import org.springframework.stereotype.*;
  **/
 @Component
 public class RequestUtils {
-    @Autowired
     OkHttpClient client;
+    CookieUtils cookieUtils;
     private String cookie;
-
     @Value("${user_agent}")
     String user_agent;
     @Value("${type}")
@@ -24,14 +23,12 @@ public class RequestUtils {
     @Value("${referer}")
     String referer;
 
-    /**
-     * 发送请求
-     *
-     * @param cookie cookie值
-     * @param param  参数实体对象
-     * @return
-     * @throws Exception
-     */
+    public RequestUtils(OkHttpClient client, CookieUtils cookieUtils) {
+        this.client = client;
+        this.cookieUtils = cookieUtils;
+        cookie = cookieUtils.get();
+    }
+
     public String post(ParamEntity param) {
         // 生成请求参数
         String paramString = new StringBuilder()

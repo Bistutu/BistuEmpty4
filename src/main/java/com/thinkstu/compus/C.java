@@ -25,35 +25,25 @@ public class C {
     }
 
     public void fetch(String yyyyMmDd, String md) {
-        int KSJC = 0, JSJC = 0;
-        int time = 0; // time是时段
-
+        int KSJC = 0, JSJC = 0, time = 0;
         try (PrintWriter printWriter = new PrintWriter(path.getPath() + "/3/3" + md + ".json");) {
-            StringBuilder sb = new StringBuilder();
-            time = 0;
-            sb.append("[");
+            StringBuilder sb = new StringBuilder().append("[");
             while (time < 1000) {
                 time = getFormat.time(time, sb, KSJC, JSJC);
                 KSJC = getFormat.K;
                 JSJC = getFormat.J;
-
                 ParamEntity param = new ParamEntity(yyyyMmDd, 3, KSJC, JSJC);
                 String      data  = requestUtils.post(param);
                 int         begin = data.indexOf("rows") + 6;
                 int         end   = data.lastIndexOf("]");
                 data = data.substring(begin, end + 1); // data是初始的的JSON数组
-                List<EmptyEntity> userList = JSON.parseArray(data, EmptyEntity.class); // userList是原始JSON的对象数组
-                // emptyClassArray是为了排除干扰和排序
+                List<RowsBean> userList = JSON.parseArray(data, RowsBean.class); // userList是原始JSON的对象数组
+                // emptyClassArray 是为了排除干扰和排序
                 ArrayList<String> emptyClassArray = new ArrayList<String>();
-                for (EmptyEntity assist : userList) { // assist是原始JSON的对象
-                    emptyClassArray.add(assist.getJASMC().substring(2, assist.getJASMC().length()));
+                for (RowsBean row : userList) {
+                    emptyClassArray.add(row.getJASMC().substring(2));
                 }
-                // 排序
-                Collections.sort(emptyClassArray);
-
-//                    if (time == 0) {
-//                        sb.append("{\"a\":\"1\",\"b\":\"" + "试试我们的新应用？微信搜索小程序：Bis兔洞\",\"c\":\"1\",\"d\":\"\"},");
-//                    }
+                Collections.sort(emptyClassArray);   // 排序
                 getFormat.start(sb, KSJC, JSJC, time, emptyClassArray, ".*1-.*", "第一教学楼", 2);
                 getFormat.start(sb, KSJC, JSJC, time, emptyClassArray, ".*2-.*", "第二教学楼", 2);
                 getFormat.start_no(sb, KSJC, JSJC, time, emptyClassArray, ".*3-.*", "第三教学楼", 2);
@@ -61,7 +51,6 @@ public class C {
             }
             sb.append("]");
             printWriter.print(sb);
-            // 日志记录
         } catch (Exception ex) {
             ex.printStackTrace();
         }

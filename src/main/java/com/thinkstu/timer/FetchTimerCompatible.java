@@ -2,6 +2,7 @@ package com.thinkstu.timer;
 
 import com.thinkstu.compus.*;
 import com.thinkstu.utils.*;
+import jakarta.annotation.*;
 import lombok.extern.slf4j.*;
 import okhttp3.*;
 import org.springframework.scheduling.annotation.*;
@@ -20,18 +21,17 @@ import java.util.concurrent.*;
 
 @Slf4j
 @Component
-public class TimeToCatch {
+public class FetchTimerCompatible {
     OkHttpClient client;
     PathInitial path;
     CookieUtils cookieUtils;
     ExecutorService executor;
-
     A a;
     B b;
     C c;
     D d;
 
-    public TimeToCatch(OkHttpClient client, PathInitial path, CookieUtils cookieUtils, ExecutorService executor, A a, B b, C c, D d) {
+    public FetchTimerCompatible(OkHttpClient client, PathInitial path, CookieUtils cookieUtils, ExecutorService executor, A a, B b, C c, D d) {
         this.client = client;
         this.path = path;
         this.cookieUtils = cookieUtils;
@@ -42,26 +42,31 @@ public class TimeToCatch {
         this.d = d;
     }
 
-    @Scheduled(initialDelay = 1_000, fixedRate = 10800_000)
+    //    @Scheduled(initialDelay = 1_000, fixedRate = Integer.MAX_VALUE)
     // 每天 6 点、12 点各执行一次
-//    @Scheduled(cron = "0 20 6,12 * * ?")
-    private void crawl() throws Exception {
+    @Scheduled(cron = "0 20 6,12 * * ?")
+    private void autoFetch() {
         LocalDateTime now = LocalDateTime.now();
         for (int i = 0; i < 5; i++) {
-            now = now.plus(i, ChronoUnit.DAYS);
-            String yyyy_MM_dd = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(now);
-            String MM_DD      = DateTimeFormatter.ofPattern("Md").format(now);
+            String yyyy_MM_dd = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(now.plus(i, ChronoUnit.DAYS));
+            String MM_DD      = DateTimeFormatter.ofPattern("Md").format(now.plus(i, ChronoUnit.DAYS));
             executor.submit(() -> {
                 try {
                     a.fetch(yyyy_MM_dd, MM_DD);
                     b.fetch(yyyy_MM_dd, MM_DD);
                     c.fetch(yyyy_MM_dd, MM_DD);
                     d.fetch(yyyy_MM_dd, MM_DD);
+                    log.info("兼容 ===》{} 执行完毕！", yyyy_MM_dd);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
         }
 
+    }
+
+    @PostConstruct
+    void initial() {
+        autoFetch();    // 自动执行一次
     }
 }

@@ -26,16 +26,16 @@ public class GenerateJSON {
 
     public void generate10(String data, String date, Integer time) {
         // 获得响应数据，rows 为获得的教室实体对象
-        EmptyResultEntity                                     result = JSON.parseObject(data, EmptyResultEntity.class);
-        List<EmptyResultEntity.DatasBean.CxkxjsBean.RowsBean> rows   = result.getDatas().getCxkxjs().getRows();
-        LinkedList<String>                                    xxa    = new LinkedList<>();
-        LinkedList<String>                                    xxb    = new LinkedList<>();
-        LinkedList<String>                                    xxc    = new LinkedList<>();
-        LinkedList<String>                                    xxd    = new LinkedList<>();
-        LinkedList<String>                                    wla    = new LinkedList<>();
-        LinkedList<String>                                    wlb    = new LinkedList<>();
-        LinkedList<String>                                    wlc    = new LinkedList<>();
-        LinkedHashMap<String, LinkedList<String>>             map    = new LinkedHashMap<>();
+        EmptyResultEntity                         result = JSON.parseObject(data, EmptyResultEntity.class);
+        List<RowsBean>                            rows   = result.getDatas().getCxkxjs().getRows();
+        LinkedList<String>                        xxa    = new LinkedList<>();
+        LinkedList<String>                        xxb    = new LinkedList<>();
+        LinkedList<String>                        xxc    = new LinkedList<>();
+        LinkedList<String>                        xxd    = new LinkedList<>();
+        LinkedList<String>                        wla    = new LinkedList<>();
+        LinkedList<String>                        wlb    = new LinkedList<>();
+        LinkedList<String>                        wlc    = new LinkedList<>();
+        LinkedHashMap<String, LinkedList<String>> map    = new LinkedHashMap<>();
         map.put("文理楼A \uD83D\uDCD4 ", wla);
         map.put("文理楼B \uD83D\uDCD4 ", wlb);
         map.put("文理楼C \uD83D\uDCD4 ", wlc);
@@ -44,7 +44,7 @@ public class GenerateJSON {
         map.put("信息楼C \uD83D\uDCBB ", xxc);
         map.put("信息楼D \uD83D\uDCBB ", xxd);
 
-        for (EmptyResultEntity.DatasBean.CxkxjsBean.RowsBean row : rows) {
+        for (RowsBean row : rows) {
             String classroom = row.getJASMC();
             // 匹配非中文字符，新校区不需要含中文的教室
             if (nonChinesePattern.matcher(classroom).matches() && !excludePattern10.matcher(classroom).matches()) {
@@ -86,18 +86,18 @@ public class GenerateJSON {
 
     public void generate1(String data, String date, Integer time) {
         // 获得响应数据，rows 为获得的教室实体对象
-        EmptyResultEntity                                     result = JSON.parseObject(data, EmptyResultEntity.class);
-        List<EmptyResultEntity.DatasBean.CxkxjsBean.RowsBean> rows   = result.getDatas().getCxkxjs().getRows();
-        LinkedList<String>                                    one    = new LinkedList<>();
-        LinkedList<String>                                    two    = new LinkedList<>();
-        LinkedList<String>                                    fourth = new LinkedList<>();
-        LinkedHashMap<String, LinkedList<String>>             map    = new LinkedHashMap<>();
+        EmptyResultEntity                         result = JSON.parseObject(data, EmptyResultEntity.class);
+        List<RowsBean>                            rows   = result.getDatas().getCxkxjs().getRows();
+        LinkedList<String>                        one    = new LinkedList<>();
+        LinkedList<String>                        two    = new LinkedList<>();
+        LinkedList<String>                        fourth = new LinkedList<>();
+        LinkedHashMap<String, LinkedList<String>> map    = new LinkedHashMap<>();
         map.put("第一教学楼", one);
         map.put("第二教学楼", two);
         map.put("第四教学楼", fourth);
 
         // 小营校区不需要含中文的教室
-        for (EmptyResultEntity.DatasBean.CxkxjsBean.RowsBean row : rows) {
+        for (RowsBean row : rows) {
             String classroom = row.getJASMC();
             // 这里做了排除教室的设定
             if (nonChinesePattern.matcher(classroom).matches()) {
@@ -142,15 +142,15 @@ public class GenerateJSON {
 
     public void generate2(String data, String date, Integer time) {
         // 获得响应数据，rows 为获得的教室实体对象
-        EmptyResultEntity                                     result = JSON.parseObject(data, EmptyResultEntity.class);
-        List<EmptyResultEntity.DatasBean.CxkxjsBean.RowsBean> rows   = result.getDatas().getCxkxjs().getRows();
-        LinkedList<String>                                    jt     = new LinkedList<>();
-        LinkedList<String>                                    two    = new LinkedList<>();
-        LinkedHashMap<String, LinkedList<String>>             map    = new LinkedHashMap<>();
+        EmptyResultEntity                         result = JSON.parseObject(data, EmptyResultEntity.class);
+        List<RowsBean>                            rows   = result.getDatas().getCxkxjs().getRows();
+        LinkedList<String>                        jt     = new LinkedList<>();
+        LinkedList<String>                        two    = new LinkedList<>();
+        LinkedHashMap<String, LinkedList<String>> map    = new LinkedHashMap<>();
         map.put("阶梯教室", jt);
         map.put("第二教学楼", two);
 
-        for (EmptyResultEntity.DatasBean.CxkxjsBean.RowsBean row : rows) {
+        for (RowsBean row : rows) {
             String classroom = row.getJASMC();
             // 这里作了排除教室的设定
             if (!excludePattern2.matcher(classroom).matches()) {
@@ -195,7 +195,7 @@ public class GenerateJSON {
     public void generate3(String data, String date, Integer time) {
         // 获得响应数据，rows 为获得的教室实体对象
         EmptyResultEntity                                     result = JSON.parseObject(data, EmptyResultEntity.class);
-        List<EmptyResultEntity.DatasBean.CxkxjsBean.RowsBean> rows   = result.getDatas().getCxkxjs().getRows();
+        List<RowsBean> rows   = result.getDatas().getCxkxjs().getRows();
         LinkedList<String>                                    one    = new LinkedList<>();
         LinkedList<String>                                    two    = new LinkedList<>();
         LinkedList<String>                                    third  = new LinkedList<>();
@@ -204,7 +204,7 @@ public class GenerateJSON {
         map.put("第二教学楼", two);
         map.put("第三教学楼", third);
 
-        for (EmptyResultEntity.DatasBean.CxkxjsBean.RowsBean row : rows) {
+        for (RowsBean row : rows) {
             String classroom = row.getJASMC();
             // 拆分教室名称，如 3-3-101，并添加至队列
             String[] split = classroom.split("-");
