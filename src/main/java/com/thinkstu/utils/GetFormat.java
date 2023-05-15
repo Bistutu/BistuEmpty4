@@ -1,7 +1,6 @@
 package com.thinkstu.utils;
 
 import kotlin.*;
-import org.springframework.stereotype.*;
 
 import java.util.*;
 
@@ -10,7 +9,6 @@ import java.util.*;
  * @create: 2021-12-11 6:18 下午
  * @function: 格式化操作
  */
-@Component
 public class GetFormat {
     int paraTransfer = 0, colorNumber = 0;
     char para;

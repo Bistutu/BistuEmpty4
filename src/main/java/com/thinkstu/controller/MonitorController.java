@@ -24,16 +24,25 @@ public class MonitorController {
     }
 
     @GetMapping("/{campus}/{forward}.json")
-    String get1(@PathVariable("campus") String campus, @PathVariable("forward") String forward) {
-        log.info("===》第 {} 次访问，目标：{}", count++, forward);    // 访问自增1
+    String get1(
+            @PathVariable("campus") Integer campus,
+            @PathVariable("forward") String forward,
+            @RequestHeader(value = "X-Forwarded-For", required = false) String ip) {
+        log.info("{}=》第 {} 次访问：{}", ip, count++, forward);    // 访问自增1
         String path = pathInitial.getPath() + campus + File.separator + forward + ".json";
         return new cn.hutool.core.io.file.FileReader(path).readString();
     }
 
+
     @GetMapping("/empty/{campus}/{forward}.json")
-    String get2(@PathVariable("campus") String campus, @PathVariable("forward") String forward) {
-        log.info("===》第 {} 次访问，目标：{}", count++, forward);    // 访问自增1
+    String get2(@PathVariable("campus") Integer campus,
+                @PathVariable("forward") String forward,
+                @RequestHeader(value = "X-Forwarded-For", required = false) String ip) {
         String path = pathInitial.getPath() + campus + File.separator + forward + ".json";
+        if (campus == 1 || campus == 2 || campus == 5 || campus == 8) {
+            log.info("{}=》第 {} 次访问：{}", ip, count++, forward);    // 访问自增1
+            path = pathInitial.getPath() + "1" + File.separator + forward + ".json";
+        }
         return new cn.hutool.core.io.file.FileReader(path).readString();
     }
 
